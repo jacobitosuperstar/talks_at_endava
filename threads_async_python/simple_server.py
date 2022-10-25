@@ -37,5 +37,4 @@ def fibonacci_handler(client: socket) -> None:
 
 
 if __name__ == "__main__":
-    thread_server(("", 12345))
-
+    simple_server(("", 12345))
