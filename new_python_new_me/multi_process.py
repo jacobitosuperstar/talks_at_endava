@@ -67,7 +67,8 @@ def main_single_thread(fib_number: int, callers: int) -> int:
 
 def main_threads(fib_number: int, callers: int) -> int:
     with time_it("** main_threads **"):
-        with concurrent.futures.ThreadPoolExecutor(max_workers=2) as pool:
+        # with concurrent.futures.ThreadPoolExecutor(max_workers=2) as pool:
+        with concurrent.futures.ThreadPoolExecutor() as pool:
             futures: List[Future[int]] = [
                 pool.submit(fibonacci, fib_number)
                 for _ in range(callers)
@@ -80,7 +81,8 @@ def main_threads(fib_number: int, callers: int) -> int:
 
 def main_multiprocess(fib_number: int, callers: int) -> int:
     with time_it("** main_multiprocess **"):
-        with concurrent.futures.ProcessPoolExecutor(max_workers=2) as pool:
+        # with concurrent.futures.ProcessPoolExecutor(max_workers=2) as pool:
+        with concurrent.futures.ProcessPoolExecutor() as pool:
             futures: List[Future[int]] = [
                 pool.submit(fibonacci, fib_number)
                 for _ in range(callers)
@@ -94,7 +96,7 @@ def main_multiprocess(fib_number: int, callers: int) -> int:
 
 if __name__ == "__main__":
 
-    FIBONACCI_NUMBER = 0
+    FIBONACCI_NUMBER = 10
     NUMBER_OF_CALLERS = 1000
 
     main_single_thread(fib_number=FIBONACCI_NUMBER, callers=NUMBER_OF_CALLERS)
