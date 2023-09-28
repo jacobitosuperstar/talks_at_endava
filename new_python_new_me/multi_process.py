@@ -40,34 +40,26 @@ def time_it(func_name: str) -> Generator[None, None, None]:
 
 
 def fibonacci(n) -> int:
-    with time_it("fibonacci"):
-        # Who is calling the function
-        caller_frame = inspect.stack()[1]
-        caller_name = caller_frame[3]
-        print("Caller: ", caller_name)
-        # In what thread am I in
-        current_thread_id = threading.get_ident()
-        print("Current Thread ID: ", current_thread_id)
-        return 1 if n <= 2 else (fibonacci(n-1) + fibonacci(n-2))
-    # return 1 if n <= 2 else (fibonacci(n-1) + fibonacci(n-2))
+    # # Who is calling the function
+    # caller_frame = inspect.stack()[1]
+    # caller_name = caller_frame[3]
+    # print("Caller: ", caller_name)
+    # # In what thread am I in
+    # current_thread_id = threading.get_ident()
+    # print("Current Thread ID: ", current_thread_id)
+    return 1 if n <= 2 else (fibonacci(n-1) + fibonacci(n-2))
 
 
 def main_single_thread(fib_number: int, callers: int) -> int:
     with time_it("** main_single_thread **"):
-        with concurrent.futures.ThreadPoolExecutor(max_workers=1) as pool:
-            futures: List[Future[int]] = [
-                pool.submit(fibonacci, fib_number)
-                for _ in range(callers)
-            ]
-
-            for future in concurrent.futures.as_completed(futures):
-                print(f"got {future.result()}")
+        for _ in range(callers):
+            fib = fibonacci(fib_number)
+            print(f"got {fib}")
     return 0
 
 
 def main_threads(fib_number: int, callers: int) -> int:
     with time_it("** main_threads **"):
-        # with concurrent.futures.ThreadPoolExecutor(max_workers=2) as pool:
         with concurrent.futures.ThreadPoolExecutor() as pool:
             futures: List[Future[int]] = [
                 pool.submit(fibonacci, fib_number)
@@ -81,7 +73,6 @@ def main_threads(fib_number: int, callers: int) -> int:
 
 def main_multiprocess(fib_number: int, callers: int) -> int:
     with time_it("** main_multiprocess **"):
-        # with concurrent.futures.ProcessPoolExecutor(max_workers=2) as pool:
         with concurrent.futures.ProcessPoolExecutor() as pool:
             futures: List[Future[int]] = [
                 pool.submit(fibonacci, fib_number)
@@ -96,8 +87,8 @@ def main_multiprocess(fib_number: int, callers: int) -> int:
 
 if __name__ == "__main__":
 
-    FIBONACCI_NUMBER = 10
-    NUMBER_OF_CALLERS = 1000
+    FIBONACCI_NUMBER = 0
+    NUMBER_OF_CALLERS = 10_000
 
     main_single_thread(fib_number=FIBONACCI_NUMBER, callers=NUMBER_OF_CALLERS)
     main_threads(fib_number=FIBONACCI_NUMBER, callers=NUMBER_OF_CALLERS)
