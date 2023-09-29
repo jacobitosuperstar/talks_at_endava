@@ -392,7 +392,7 @@ run a thread inside a new interpreter):
 
 ```python
 
-from typing import Generator, List
+from typing import Generator
 from contextlib import contextmanager
 import interpreters
 import threading
